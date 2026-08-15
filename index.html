@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>PostureGuard</title>
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f5f9ff;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --text: #0b1b33;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --shadow: 0 20px 60px rgba(37, 99, 235, 0.15);
+            --radius: 28px;
+            --transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---------- BUTTONS ---------- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+            user-select: none;
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .btn:hover::after {
+            opacity: 1;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(37, 99, 235, 0.45);
+        }
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+            box-shadow: none;
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+        }
+
+        .btn-large {
+            padding: 18px 44px;
+            font-size: 1.1rem;
+        }
+
+        /* ---------- ANIMATED BACKGROUND BLOBS ---------- */
+        .hero-blobs {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.20;
+            animation: floatBlob 22s ease-in-out infinite;
+        }
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: #2563eb;
+            top: -150px;
+            right: -120px;
+            animation-delay: 0s;
+        }
+        .blob-2 {
+            width: 350px;
+            height: 350px;
+            background: #7c3aed;
+            bottom: -80px;
+            left: -80px;
+            animation-delay: -6s;
+        }
+        .blob-3 {
+            width: 280px;
+            height: 280px;
+            background: #06b6d4;
+            top: 40%;
+            left: 30%;
+            animation-delay: -12s;
+        }
+
+        @keyframes floatBlob {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(40px, -50px) scale(1.1);
+            }
+            50% {
+                transform: translate(-30px, 30px) scale(0.9);
+            }
+            75% {
+                transform: translate(50px, 40px) scale(1.05);
+            }
+        }
+
+        /* ---------- NAV ---------- */
+        .navbar {
+            padding: 18px 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.3s;
+        }
+        .logo:hover {
+            transform: scale(1.03);
+        }
+        .logo span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo .shield {
+            font-size: 1.6rem;
+            -webkit-text-fill-color: initial;
+        }
+
+        .lang-group {
+            display: flex;
+            gap: 6px;
+            background: var(--bg);
+            padding: 4px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 32px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            touch-action: manipulation;
+        }
+        .lang-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .lang-btn:hover:not(.active) {
+            color: var(--text);
+            transform: scale(1.05);
+        }
+        .lang-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            padding: 50px 0 70px;
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-anim {
+            opacity: 0;
+            animation: fadeInUp 0.9s ease-out forwards;
+        }
+        .hero-anim-delay-1 {
+            animation-delay: 0.2s;
+        }
+        .hero-anim-delay-2 {
+            animation-delay: 0.4s;
+        }
+        .hero-anim-delay-3 {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 18px;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 0 14px rgba(37, 99, 235, 0);
+            }
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+        }
+        .hero h1 .highlight {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p.sub {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin-bottom: 28px;
+        }
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 6px;
+        }
+
+        /* ---------- MOCKUP (Phone) ---------- */
+        .mockup-wrapper {
+            display: flex;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background: #0f172a;
+            border-radius: 44px;
+            padding: 14px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.18), 0 0 0 6px #e2e8f0;
+            animation: floatPhone 7s ease-in-out infinite;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .phone-mockup:hover {
+            transform: rotateY(-5deg) rotateX(4deg) scale(1.02);
+        }
+
+        @keyframes floatPhone {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-14px);
+            }
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #f8fafc;
+            border-radius: 32px;
+            overflow: hidden;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e9edf2;
+        }
+        .app-header .app-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--primary);
+        }
+        .app-header .app-name span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .app-header .app-sub {
+            font-size: 0.7rem;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .pose-preview {
+            margin: 14px 0 12px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid #eef2f6;
+        }
+        .pose-preview .pose-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .pose-item {
+            background: #eef2f6;
+            border-radius: 14px;
+            aspect-ratio: 1/1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: #1e293b;
+            font-weight: 500;
+            transition: 0.2s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+        .pose-item.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .pose-item .pose-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+        .pose-item .pose-label {
+            margin-top: 4px;
+            font-size: 0.55rem;
+            opacity: 0.7;
+        }
+
+        .pose-hint {
+            background: var(--gradient);
+            color: #fff;
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin: 8px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .pose-hint .hint-icon {
+            font-size: 1.6rem;
+        }
+        .pose-hint .hint-text {
+            flex: 1;
+        }
+
+        .tx-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #ffffff;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            border: 1px solid #edf2f7;
+            transition: all 0.2s;
+        }
+        .tx-item .tag {
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .tx-item .reason {
+            color: var(--text-muted);
+            flex: 1;
+            margin: 0 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tx-item .tx-amount {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .mockup-footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #94a3b8;
+            padding-top: 6px;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .scroll-hint {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(8px);
+            }
+        }
+
+        /* disable hover transforms on touch */
+        @media (hover: none) {
+            .btn-primary:hover,
+            .btn-outline:hover {
+                transform: none;
+            }
+            .phone-mockup:hover {
+                transform: none;
+            }
+            .btn:active {
+                transform: scale(0.96);
+                opacity: 0.9;
+            }
+        }
+
+        /* ---------- FEATURES ---------- */
+        .features {
+            padding: 80px 0;
+            background: #fff;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 48px;
+            letter-spacing: -0.5px;
+        }
+        .section-title .highlight {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--bg);
+            padding: 32px 24px;
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid transparent;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow);
+        }
+        .feature-icon {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            display: inline-block;
+            transition: transform 0.5s;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.15) rotate(-3deg);
+        }
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* ---------- DOWNLOAD CTA ---------- */
+        .download-cta {
+            padding: 80px 0;
+            background: var(--gradient);
+            color: #fff;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .download-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.15), transparent 70%);
+            animation: shimmerBg 9s ease-in-out infinite;
+        }
+        @keyframes shimmerBg {
+            0%,
+            100% {
+                transform: translateX(-30%) scale(1);
+            }
+            50% {
+                transform: translateX(30%) scale(1.2);
+            }
+        }
+        .download-cta h2 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        .download-cta p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 32px;
+            position: relative;
+            z-index: 1;
+        }
+        .download-cta .btn {
+            background: #fff;
+            color: var(--primary);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 1;
+        }
+        .download-cta .btn:hover {
+            background: #f1f5ff;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            padding: 48px 0 32px;
+            background: #f1f5f9;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-brand .logo {
+            font-size: 1.6rem;
+        }
+        .footer-brand p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        .footer-email {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .footer-email:hover {
+            color: var(--primary);
+            transform: scale(1.04);
+        }
+        .footer-bottom {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 40px;
+            }
+            .hero {
+                padding: 30px 0 50px;
+            }
+            .hero h1 {
+                font-size: 2.6rem;
+            }
+            .hero p.sub {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .mockup-wrapper {
+                order: -1;
+            }
+            .phone-mockup {
+                width: 260px;
+                height: 520px;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .download-cta h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 16px;
+            }
+            .nav-content {
+                flex-wrap: nowrap;
+                gap: 6px;
+            }
+            .logo {
+                font-size: 1.4rem;
+            }
+            .lang-btn {
+                padding: 6px 14px;
+                font-size: 0.75rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero p.sub {
+                font-size: 1rem;
+            }
+            .hero-badge {
+                font-size: 0.75rem;
+                padding: 6px 14px;
+            }
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+            .phone-mockup {
+                width: 200px;
+                height: 400px;
+                border-radius: 36px;
+                padding: 10px;
+            }
+            .phone-screen {
+                border-radius: 28px;
+                padding: 10px 8px;
+            }
+            .pose-item .pose-icon {
+                font-size: 1.4rem;
+            }
+            .pose-item .pose-label {
+                font-size: 0.45rem;
+            }
+            .pose-hint {
+                font-size: 0.65rem;
+                padding: 8px 10px;
+            }
+            .tx-item {
+                padding: 6px 8px;
+                font-size: 0.7rem;
+            }
+            .features {
+                padding: 50px 0;
+            }
+            .section-title {
+                font-size: 1.7rem;
+                margin-bottom: 32px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .feature-card {
+                padding: 24px 16px;
+            }
+            .download-cta {
+                padding: 50px 0;
+            }
+            .download-cta h2 {
+                font-size: 1.7rem;
+            }
+            .download-cta p {
+                font-size: 1rem;
+            }
+            .footer-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .blob-1 {
+                width: 200px;
+                height: 200px;
+            }
+            .blob-2 {
+                width: 160px;
+                height: 160px;
+            }
+            .blob-3 {
+                width: 130px;
+                height: 130px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .phone-mockup {
+                width: 170px;
+                height: 350px;
+            }
+            .logo {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* print */
+        @media print {
+            .hero-blobs {
+                display: none;
+            }
+            .navbar {
+                position: relative;
+                background: #fff;
+            }
+            .phone-mockup {
+                animation: none;
+                box-shadow: none;
+            }
+            .download-cta {
+                background: #2563eb !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== ANIMATED BG ========== -->
+    <div class="hero-blobs" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo">
+                    <span class="shield">🛡️</span> <span>PostureGuard</span>
+                </a>
+                <div class="lang-group" id="langToggle">
+                    <button class="lang-btn active" data-lang="bn">বাংলা</button>
+                    <button class="lang-btn" data-lang="en">English</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <div class="hero-badge hero-anim">
+                        <span class="badge-dot"></span>
+                        <span data-i18n="badge">পোজ গাইড · ২০+ টেমপ্লেট</span>
+                    </div>
+                    <h1 class="hero-anim" data-i18n="heroTitle">
+                        <span class="highlight">PostureGuard</span> <br />সঠিক পোজে <br />ছবি তুলুন
+                    </h1>
+                    <p class="sub hero-anim hero-anim-delay-1" data-i18n="heroSub">
+                        যারা পোজ দিতে পারেন না, তাদের জন্য ২০+ টেমপ্লেট সহ স্মার্ট গাইড। 
+                        শুধু ক্যামেরা খুলুন, টেমপ্লেট বেছে নিন, আর গাইড অনুসরণ করুন।
+                    </p>
+                    <div class="hero-actions hero-anim hero-anim-delay-2">
+                        <a href="app/PostureGuard.apk" download class="btn btn-primary" id="downloadBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            <span data-i18n="downloadBtn">Android ডাউনলোড</span>
+                        </a>
+                        <a href="#features" class="btn btn-outline" data-i18n="featuresBtn">টেমপ্লেট দেখুন</a>
+                    </div>
+                </div>
+
+                <!-- Phone Mockup -->
+                <div class="mockup-wrapper hero-anim hero-anim-delay-3">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div class="app-header">
+                                <span class="app-name"><span>PostureGuard</span></span>
+                                <span class="app-sub" data-i18n="appSub">পোজ গাইড</span>
+                            </div>
+
+                            <div class="pose-preview">
+                                <div class="pose-grid">
+                                    <div class="pose-item active"><span class="pose-icon">🧍</span><span class="pose-label">স্ট্যান্ড</span></div>
+                                    <div class="pose-item"><span class="pose-icon">🧑‍🤝‍🧑</span><span class="pose-label">জোড়া</span></div>
+                                    <div class="pose-item"><span class="pose-icon">🪑</span><span class="pose-label">সিটেড</span></div>
+                                    <div class="pose-item"><span class="pose-icon">🏃</span><span class="pose-label">অ্যাকশন</span></div>
+                                    <div class="pose-item"><span class="pose-icon">🤳</span><span class="pose-label">সেলফি</span></div>
+                                    <div class="pose-item"><span class="pose-icon">🌅</span><span class="pose-label">ল্যান্ডস্কেপ</span></div>
+                                </div>
+                            </div>
+
+                            <div class="pose-hint">
+                                <span class="hint-icon">📐</span>
+                                <span class="hint-text" data-i18n="poseHint">"কাঁধ সোজা, ডান পা একটু সামনে"</span>
+                            </div>
+
+                            <div class="tx-list" id="mockTxList">
+                                <div class="tx-item">
+                                    <span class="tag" data-i18n="templateTag">টেমপ্লেট</span>
+                                    <span class="reason" data-i18n="tx1Reason">বিজনেস পোজ</span>
+                                    <span class="tx-amount" data-i18n="tx1Amount">★ ৪.৮</span>
+                                </div>
+                                <div class="tx-item">
+                                    <span class="tag" data-i18n="templateTag">টেমপ্লেট</span>
+                                    <span class="reason" data-i18n="tx2Reason">ক্যাজুয়াল</span>
+                                    <span class="tx-amount" data-i18n="tx2Amount">★ ৪.৯</span>
+                                </div>
+                                <div class="tx-item">
+                                    <span class="tag" data-i18n="templateTag">টেমপ্লেট</span>
+                                    <span class="reason" data-i18n="tx3Reason">গ্রুপ ফটো</span>
+                                    <span class="tx-amount" data-i18n="tx3Amount">★ ৪.৭</span>
+                                </div>
+                            </div>
+                            <div class="mockup-footer">
+                                <span data-i18n="mockFooter">২০+ টেমপ্লেট · রিয়েল-টাইম গাইড</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-hint">↓ <span data-i18n="scrollHint">স্ক্রল করুন</span></div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES ========== -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title" data-i18n="featuresTitle"><span class="highlight">PostureGuard</span> এর বিশেষত্ব</h2>
+            <div class="features-grid" id="featuresGrid">
+                <div class="feature-card" data-delay="0">
+                    <div class="feature-icon">🧘</div>
+                    <h3 data-i18n="f1Title">২০+ টেমপ্লেট</h3>
+                    <p data-i18n="f1Desc">বিভিন্ন পরিস্থিতির জন্য তৈরি পোজ টেমপ্লেট।</p>
+                </div>
+                <div class="feature-card" data-delay="100">
+                    <div class="feature-icon">📱</div>
+                    <h3 data-i18n="f2Title">রিয়েল-টাইম গাইড</h3>
+                    <p data-i18n="f2Desc">ক্যামেরার ওভারলে দেখিয়ে সঠিক পোজ শেখায়।</p>
+                </div>
+                <div class="feature-card" data-delay="200">
+                    <div class="feature-icon">🔁</div>
+                    <h3 data-i18n="f3Title">অটো অ্যালাইন</h3>
+                    <p data-i18n="f3Desc">আপনার শরীরের সাথে টেমপ্লেট মেলিয়ে দেয়।</p>
+                </div>
+                <div class="feature-card" data-delay="300">
+                    <div class="feature-icon">🏆</div>
+                    <h3 data-i18n="f4Title">স্কোর & ফিডব্যাক</h3>
+                    <p data-i18n="f4Desc">পোজের মান অনুযায়ী রেটিং ও পরামর্শ দেয়।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== DOWNLOAD CTA ========== -->
+    <section class="download-cta">
+        <div class="container">
+            <h2 data-i18n="ctaTitle"><span style="color:#fcd34d;">PostureGuard</span> ডাউনলোড করুন</h2>
+            <p data-i18n="ctaSub">সঠিক পোজে ছবি তোলা এখন সহজ। ২০+ টেমপ্লেট ও গাইডেড ক্যামেরা।</p>
+            <a href="app/PostureGuard.apk" download class="btn btn-large" id="downloadBtn2">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span data-i18n="ctaBtn">Android অ্যাপ ডাউনলোড</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo"><span>🛡️ PostureGuard</span></a>
+                    <p data-i18n="footerTag">পোজ গাইড · কনফিডেন্ট ফটো</p>
+                </div>
+                <a href="mailto:ah27042008@gmail.com" class="footer-email">
+                    ✉️ ah27042008@gmail.com
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="footerCopyright">&copy; 2026 PostureGuard. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== SCRIPT ========== -->
+    <script>
+        (function() {
+            // i18n dictionary
+            const dict = {
+                bn: {
+                    badge: 'পোজ গাইড · ২০+ টেমপ্লেট',
+                    heroTitle: '<span class="highlight">PostureGuard</span> <br />সঠিক পোজে <br />ছবি তুলুন',
+                    heroSub: 'যারা পোজ দিতে পারেন না, তাদের জন্য ২০+ টেমপ্লেট সহ স্মার্ট গাইড। শুধু ক্যামেরা খুলুন, টেমপ্লেট বেছে নিন, আর গাইড অনুসরণ করুন।',
+                    downloadBtn: 'Android ডাউনলোড',
+                    featuresBtn: 'বৈশিষ্ট্য দেখুন',
+                    appSub: 'পোজ গাইড',
+                    poseHint: '"কাঁধ সোজা, ডান পা একটু সামনে"',
+                    templateTag: 'টেমপ্লেট',
+                    tx1Reason: 'বিজনেস পোজ',
+                    tx1Amount: '★ ৪.৮',
+                    tx2Reason: 'ক্যাজুয়াল',
+                    tx2Amount: '★ ৪.৯',
+                    tx3Reason: 'গ্রুপ ফটো',
+                    tx3Amount: '★ ৪.৭',
+                    mockFooter: '২০+ টেমপ্লেট · রিয়েল-টাইম গাইড',
+                    scrollHint: 'স্ক্রল করুন',
+                    featuresTitle: 'PostureGuard এর বিশেষত্ব',
+                    f1Title: '২০+ টেমপ্লেট',
+                    f1Desc: 'বিভিন্ন পরিস্থিতির জন্য তৈরি পোজ টেমপ্লেট।',
+                    f2Title: 'রিয়েল-টাইম গাইড',
+                    f2Desc: 'ক্যামেরার ওভারলে দেখিয়ে সঠিক পোজ শেখায়।',
+                    f3Title: 'অটো অ্যালাইন',
+                    f3Desc: 'আপনার শরীরের সাথে টেমপ্লেট মেলিয়ে দেয়।',
+                    f4Title: 'স্কোর & ফিডব্যাক',
+                    f4Desc: 'পোজের মান অনুযায়ী রেটিং ও পরামর্শ দেয়।',
+                    ctaTitle: 'PostureGuard ডাউনলোড করুন',
+                    ctaSub: 'সঠিক পোজে ছবি তোলা এখন সহজ। ২০+ টেমপ্লেট ও গাইডেড ক্যামেরা।',
+                    ctaBtn: 'Android অ্যাপ ডাউনলোড',
+                    footerTag: 'পোজ গাইড · কনফিডেন্ট ফটো',
+                    footerCopyright: '© 2026 PostureGuard. All rights reserved.'
+                },
+                en: {
+                    badge: 'Pose Guide · 20+ Templates',
+                    heroTitle: '<span class="highlight">PostureGuard</span> <br />Perfect Pose <br />Every Time',
+                    heroSub: 'Struggling with poses? Get 20+ templates & real-time guide. Open camera, pick a pose, follow the overlay.',
+                    downloadBtn: 'Download for Android',
+                    featuresBtn: 'See Features',
+                    appSub: 'Pose Guide',
+                    poseHint: '"Shoulders straight, right foot slightly forward"',
+                    templateTag: 'Template',
+                    tx1Reason: 'Business Pose',
+                    tx1Amount: '★ 4.8',
+                    tx2Reason: 'Casual',
+                    tx2Amount: '★ 4.9',
+                    tx3Reason: 'Group Photo',
+                    tx3Amount: '★ 4.7',
+                    mockFooter: '20+ Templates · Real-time Guide',
+                    scrollHint: 'Scroll down',
+                    featuresTitle: 'Why PostureGuard?',
+                    f1Title: '20+ Templates',
+                    f1Desc: 'Poses for every occasion — business, casual, group, and more.',
+                    f2Title: 'Real-time Guide',
+                    f2Desc: 'Overlay shows exactly how to position your body.',
+                    f3Title: 'Auto-Align',
+                    f3Desc: 'Matches the template to your body proportions.',
+                    f4Title: 'Score & Feedback',
+                    f4Desc: 'Get ratings and tips to improve your pose.',
+                    ctaTitle: 'Download PostureGuard',
+                    ctaSub: 'Take confident photos with 20+ templates & guided camera.',
+                    ctaBtn: 'Download for Android',
+                    footerTag: 'Pose Guide · Confident Photos',
+                    footerCopyright: '© 2026 PostureGuard. All rights reserved.'
+                }
+            };
+
+            const langBtns = document.querySelectorAll('.lang-btn');
+            const i18nEls = document.querySelectorAll('[data-i18n]');
+
+            function setLang(lang) {
+                if (!dict[lang]) return;
+                i18nEls.forEach(el => {
+                    const key = el.dataset.i18n;
+                    if (dict[lang][key]) {
+                        if (key === 'heroTitle') {
+                            el.innerHTML = dict[lang][key];
+                        } else {
+                            el.textContent = dict[lang][key];
+                        }
+                    }
+                });
+                // update template tag
+                document.querySelectorAll('.tag').forEach(tag => {
+                    tag.textContent = dict[lang].templateTag || 'টেমপ্লেট';
+                });
+                langBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.lang === lang);
+                });
+                localStorage.setItem('PostureGuard-lang', lang);
+            }
+
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setLang(this.dataset.lang);
+                });
+            });
+
+            const saved = localStorage.getItem('PostureGuard-lang') || 'bn';
+            setLang(saved);
+
+            // Intersection Observer for feature cards
+            const featureCards = document.querySelectorAll('.feature-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const delay = parseInt(entry.target.dataset.delay) || 0;
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, delay);
+                    }
+                });
+            }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+            featureCards.forEach(card => observer.observe(card));
+
+            // smooth anchor
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+        })();
+    </script>
+</body>
+</html>
